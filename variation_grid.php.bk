@@ -1,0 +1,191 @@
+<?php
+//Get the variation id, download all variations with the related sku, and populate the product grid with quantities.
+
+//SKU = select meta_value from wp_postmeta where post_id="PRODUCT_ID" AND meta_key="_sku";
+//VARIATIONS = select post_id from wp_postmeta where meta_value="SKU" and meta_key="_sku";
+//QUANTITY = select meta_value from wp_postmeta where meta_key="_stock" and post_id="VARIATION";
+require_once('/home/strongbo/public_html/haws2/wp-load.php');
+ini_set("auto_detect_line_endings", true);
+
+$columnwidth = '65 px';
+$product_id = $_POST['product_id'];
+$colorcodeFile = fopen('/home/strongbo/public_html/haws2/wp-content/plugins/itrexus_woocommerce/colorcodes.csv', "r");
+$colorcodes = array();
+ while (($data = fgetcsv($colorcodeFile, 1600, ",")) !== FALSE) {
+        $colorcodes[strtoupper($data[0])] = ucwords($data[1]);
+    }
+
+if ($product_id){
+	$variationsArr = array();
+	$sizesArr = array();
+	$lengthsArr = array();
+	$sku = strtoupper(get_meta($product_id, "sku"));
+	$variations = $wpdb->get_results( 'SELECT post_id,meta_value FROM '.$wpdb->prefix.'postmeta where UPPER(meta_value) LIKE "'.$sku.'%" AND meta_key="attribute_pa_style" ORDER BY meta_value ASC;' );
+	foreach ( $variations as $variation )
+	{	
+		$post_id=$variation->post_id;
+		$size = get_meta($post_id, "attribute_pa_size");
+		$style = strtoupper(get_meta($post_id, "attribute_pa_style"));
+		$length = get_meta($post_id, "attribute_pa_dimension");
+		$upc = get_meta($post_id, "upc");
+		$stock = get_meta($post_id, "stock");
+		$date = get_meta($post_id, "availability_date");
+		$sizesArr[] = strtoupper($size);
+		$lengthsArr[] = $length;
+		$variationsArr[$post_id] = array(
+			'size' => strtoupper($size),
+			'style' => $style,
+			'length' => $length,
+			'stock' => $stock,
+			'date' => $date,
+			'upc' => $upc,
+			'variation' => $variation_id,
+			'variation_id' => $post_id,
+		);
+	}
+$sizesArr = array_unique($sizesArr);
+$lengthsArr = array_unique($lengthsArr);
+usort($sizesArr, "cmpsize");
+usort($lengthsArr, "cmpsize");
+usort($variationsArr, "cmp");
+//	WRITE THE TABLE
+//echo "<p>".print_r($sizesArr)."</p>";
+?>
+
+<div id="gridOrderPopup" style="background-color: #F5F5F5; border: 2px solid #AAAAAA; display: none; padding: 5px; position: absolute;">
+ <span style="width: 100%; display: block; text-align: center;">Enter Quantity</span>
+ <button style="font-weight: bold; height: 20px;" class="gridOrderClose"><span style="position: relative; bottom: 3px">x</span></button>
+ <input type="text" size="10" style="width: 5em; padding: 3px; height: 20px; text-align: right;"></input>
+ <button style="height: 20px;" class="gridOrderSubmit"><span style="position: relative; bottom: 3px">&#10004;</span></button>
+</div>
+
+<table style="<?php echo count($sizesArr) > 5 ? 'width: 95%;' : 'width: 55%;' ?> margin-left: auto; margin-right: auto; margin-bottom: 35px; border: 1px solid #C5C5C5; table-layout: fixed;">
+	<thead>
+		<tr>
+			<th colspan="<?php echo (count($sizesArr) + 2)?>" style="text-align: center; border: 1px solid #D5D5D5;">Carhartt Style: <b><?php echo substr($style,0,strlen($style)-3);?></b></th>
+		</tr>
+		<tr>
+		<th style="border: 1px solid #D5D5D5; text-align: center; font-weight: bold; <?php echo count($sizesArr) > 5 ? '' : 'width: '.$columnwidth.';' ?>"></th>
+		<th style="border: 1px solid #D5D5D5; text-align: center; font-weight: bold; <?php echo count($sizesArr) > 5 ? '' : 'width: '.$columnwidth.';' ?>">Size</th>
+<?php	foreach($sizesArr as $key=>$value){ ?>
+			<th style="border: 1px solid #D5D5D5; text-align: center; font-weight: bold;">
+				<?php echo $value;?> 
+			</th>
+<?php	}	?>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td style="border: 1px solid #D5D5D5; text-align: center"></td>
+			<td style="border: 1px solid #D5D5D5; padding-left: 25px;; font-weight: bold;" colspan="<?php echo (count($sizesArr) + 1)?>">Length</td>
+		</tr>
+<?php	foreach($lengthsArr as $length=>$lengthvalue){ ?>
+			<tr>
+				<td  style="border: 1px solid #D5D5D5; text-align: center; font-weight: bold; <?php echo count($sizesArr) > 5 ? '' : 'width: '.$columnwidth.';' ?>"><?php echo ''; ?></td>
+				<td  style="border: 1px solid #D5D5D5; text-align: center; font-weight: bold;"><?php echo ( strtoupper($lengthvalue) == 'TLL' ? 'TALL' : strtoupper($lengthvalue) );?></td>
+<?php		foreach($sizesArr as $size=>$sizevalue){ 
+				foreach($variationsArr as $variation){
+					if($variation["size"] == $sizevalue && $variation["length"] == $lengthvalue){	?>
+						<td  style="border: 1px solid #D5D5D5; text-align: center;" class="gridOrderCell" stock="<?php echo $variation["stock"];?>" date="<?php echo $variation["date"]; ?>" upc="<?php echo $variation["upc"];?>" variation_id="<?php echo $variation["variation_id"];?>" variation="<?php echo $variation["variation"];?>" style="<?php echo $variation["style"];?>" dimension="<?php echo $variation["length"];?>" size="<?php echo $variation["size"];?>">
+<?php						if($variation["stock"] == "0"){
+								$dateAvailable = $variation["date"];
+								echo substr($dateAvailable,4,2) . '/' .  substr($dateAvailable,6,2) . '/<wbr>' .  substr($dateAvailable,0,4);
+							} elseif ($variation["stock"] == ''){
+?>
+							<span style="width:100%; height: 100%; overflow:auto; display:block; color: #A5A5A5; background-color: #D5D5D5">x</span>
+<?php
+							} else {
+								echo $variation["stock"];
+							}
+?>
+						</td>
+<?php				}
+				}
+?>
+<?php		}	?>
+			</tr>
+<?php	}	?>
+	</tbody>
+</table>
+
+<?php
+//-------------------------
+}
+
+function get_meta($post_id, $meta_id){
+	global $wpdb;
+	if(substr($meta_id,0,12) != "attribute_pa"){ $meta_id = "_" . $meta_id; }
+	return $wpdb->get_results( 'SELECT meta_value FROM '.$wpdb->prefix.'postmeta where meta_key="'.$meta_id.'" AND post_id="'.$post_id.'";', ARRAY_N )[0][0];
+}
+
+function cmp($a, $b){
+	//$a and $b are populated by the $variationsArr arrays keys
+	$sizes = array(
+		"XXS" => 0,
+		"2XS" => 0,
+		"XS" => 1,
+		"XSM" => 1,
+		"S" => 2,
+		"SML" => 2,
+		"M" => 3,
+		"MED" => 3,
+		"L" => 4,
+		"LRG" => 4,
+		"XLG" => 5,
+		"XL" => 5,
+		"XXL" => 6,
+		"2XL" => 6,
+		"3XL" => 7,
+		"4XL" => 8,
+		"5XL" => 9,
+	);
+	if(is_numeric($a["size"])){
+		 if($a["size"] < $b["size"]){ return -1; }
+		 if($a["size"] > $b["size"]){ return 1; }
+	} else {
+		$asize = $sizes[$a["size"]];
+		$bsize = $sizes[$b["size"]];
+		if($asize < $bsize){ return -1; }
+		if($asize > $bsize){ return 1; }
+	}
+	if($a["length"] == $b["length"]){ return 0; }
+	return($a["length"] > $b["length"]) ? 1 : -1;
+}
+
+function cmpsize($a, $b){
+	//$a and $b are populated by the $variationsArr arrays keys
+	$sizes = array(
+		"XXS" => 0,
+		"2XS" => 0,
+		"SHT" => 0,
+		"XS" => 1,
+		"XSM" => 1,
+		"S" => 2,
+		"SML" => 2,
+		"M" => 3,
+		"MED" => 3,
+		"REG" => 3,
+		"L" => 4,
+		"TLL" => 4,
+		"LRG" => 4,
+		"XLG" => 5,
+		"XL" => 5,
+		"XXL" => 6,
+		"2XL" => 6,
+		"3XL" => 7,
+		"4XL" => 8,
+		"5XL" => 9,
+	);
+	if(is_numeric($a)){
+		if($a == $b){ return 0; }
+		if($a < $b){ return -1; }
+		if($a > $b){ return 1; }
+	} else {
+		$asize = $sizes[strtoupper($a)];
+		$bsize = $sizes[strtoupper($b)];
+		if($asize == $bsize){ return 0; }
+		if($asize < $bsize){ return -1; }
+		if($asize > $bsize){ return 1; }
+	}
+}
+?>

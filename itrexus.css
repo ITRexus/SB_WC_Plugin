@@ -1,0 +1,147 @@
+.itrImgSel{
+	width: 100px;
+	height: 50px;
+    background-position: center;
+}
+/* Mega Menu */
+.dropdown_1column,
+.dropdown_2columns,
+.dropdown_3columns,
+.dropdown_4columns,
+.dropdown_5columns,
+.dropdown_fullwidth,
+.dropdown_category1,
+.dropdown_category2,
+.dropdown_category3 {
+  margin:-3px;
+  position:relative;
+  left:0px;
+  top:-10px;
+  text-align:left;
+  padding:5px 5px 5px 5px;
+
+  /* Gradient background */
+  background:#FFF;
+
+  /* Rounded Corners */
+  -moz-border-radius: 0px 0px 5px 5px;
+  -webkit-border-radius: 0px 0px 5px 5px;
+  border-radius: 0px 0px 5px 5px;
+}
+.dropdown_1column{
+  padding:5px 5px 5px 15px;
+  font-size: 15px;
+  color: #00037D;
+  font-weight: 700;
+}
+
+.dropdown_1column {width: 140px;}
+.dropdown_2columns {width: 280px;}
+.dropdown_3columns {width: 420px;}
+.dropdown_4columns {width: 180px; font-size: 18px;color: #00037D; font-weight: 700;}
+.dropdown_5columns {width: 700px;}
+.dropdown_fullwidth{width: 80%;}
+
+.dropdown_category1,
+.dropdown_category2,
+.dropdown_category3 {
+  padding:0px 0px 0px 25px;
+  cursor: pointer;
+  cursor: hand;
+}
+.dropdown_category1 {width: 140px;}
+.dropdown_category2 {width: 140px;}
+.dropdown_category3 {width: 140px;}
+
+ul.menu > li:hover > .dropdown_fullwidth{
+  position: fixed;
+  left:10%;top:auto;
+  z-index: 99;
+}
+
+.submenu-group {
+	width: 200px;
+}
+.shop-by-category li.menu-item {
+	display: inline-block;
+	border-bottom: 0px;
+}
+
+.shop-by-category.container.nav.vertical,
+shop-by-category.border-line-2.nav.vertical.opened{
+	display: none;
+}
+
+.bodyRight{
+    margin-left: 220px;
+    width: 85%;
+    min-height: 1000px
+}
+
+.priceBox{
+    border: 2px solid #DEDEDE;
+    margin-left: 15px;
+    padding: 25px;
+    padding-top: 0px;
+    float: left;
+    width: 200px;
+}
+.priceBox span{
+    margin-left: 15px;
+    float: right;
+}
+.priceBox .priceTier{
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.menu-item-type-custom{
+	cursor: default;
+}
+.menu-item-type-custom a{
+	cursor: default;
+}
+
+
+.sbToggle{
+	display: none;
+}
+a, a:visited, a:link, .show-category .category-meta a, #welcome-menu-login .lost_password a.signup {
+    color: #00037D;
+}
+a:hover, a:active, .yith-wcwl-add-to-wishlist .yith-wcwl-wishlistaddedbrowse a > span, .yith-wcwl-add-to-wishlist .yith-wcwl-wishlistexistsbrowse a > span, .show-category .category-meta a:hover, .yith-wcwl-add-to-wishlist:hover a > span, #welcome-menu-login .lost_password a.signup {
+    color: #0667E4;
+}
+
+.btn-flat-red, a.btn-flat-red, .reply_link .comment-reply-link, .login-form-checkout input.button, #commentform #submit, .wishlist_table .add_to_cart.button, .price-table div.button-container a.btn-alternative, .show-products.show-products-list ul.products li.product.list .product-wrapper .product-actions-wrapper .product-action-button, #my-account-content div.woocommerce form p input[type="submit"], .widget.widget_price_filter button[type="submit"], table.compare-list .add-to-cart td a span, .yith-woocompare-widget a.compare.button, .show-single-product ul.products li.product .product-wrapper .product-actions-wrapper.with-wishlist .product-action-button, div:not( .header-wrapper ) .widget.woocommerce.widget_product_search input[type="submit"] {
+    color: #FFFFFF;
+    background: #00037D;
+    background-color: #00037D;
+    border-color: #00037D;
+}
+
+.btn-flat-red:hover, a.btn-flat-red:hover, .reply_link .comment-reply-link:hover, .login-form-checkout input.button:hover, #commentform #submit:hover, .wishlist_table .add_to_cart.button:hover, .price-table div.button-container a.btn-alternative:hover, .show-products.show-products-list ul.products li.product.list .product-wrapper .product-actions-wrapper .product-action-button:hover, #my-account-content div.woocommerce form p input[type="submit"]:hover, .widget.widget_price_filter button[type="submit"]:hover, table.compare-list .add-to-cart td a span:hover, .yith-woocompare-widget a.compare.button:hover, .show-single-product ul.products li.product .product-wrapper .product-actions-wrapper.with-wishlist .product-action-button:hover, div:not( .header-wrapper ) .widget.woocommerce.widget_product_search input[type="submit"]:hover{
+    color: #FFFFFF;
+    background: #0667E4;
+    background-color: #0667E4;
+    border-color: #0667E4;
+}
+
+#slogan.yit-cart-checkout-slogan .slogan-cart{
+    color: #FFFFFF;
+    background-color: #00037D;
+    margin-left: 200px;
+}
+
+.ITRprodborder{
+    border-color: #339A22;
+    border-width: 3px;
+    border-style: solid;
+    
+}
+
+.ITRtestborder{
+    border-color: #DC0000;
+    border-width: 3px;
+    border-style: solid;
+}
