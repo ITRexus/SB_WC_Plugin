@@ -184,7 +184,7 @@ final class ITRexus_Woocommerce {
                     <?php
                     if ( isset($_REQUEST['action']) /*&& 'updateprices' == $_REQUEST['action']*/ ) {
                         ?>
-                        <h3>Succesfully Updated Product Prices</h3>
+                        <h3>Successfully Updated Product Prices</h3>
                         <?php
                         $skus = $_REQUEST['post_ids'];
                         $regprices = $_REQUEST['regprice'];
@@ -1346,8 +1346,28 @@ final class ITRexus_Woocommerce {
 		
 		// New or Updated Orders
 		$orders = $conn->query("SELECT * FROM orders_status WHERE order_status LIKE 'New Order';");
-		while($curorder = $orders->fetch_assoc()){			$ediFile = $curorder['edi_file'];			$i=1;			$file_handle = fopen("/home/strongbo/docs/edi/" . $ediFile, "rb");			$line_of_text = fgets($file_handle);			rewind($file_handle);			if(strlen($line_of_text) > 120){				$line_of_text = str_replace(substr($line_of_text, 105,1), substr($line_of_text, 105,1) . "\n", $line_of_text);				file_put_contents("/home/strongbo/docs/edi/" . $ediFile, $line_of_text);			}			rewind($file_handle);			$tmporder = array();			while (!feof($file_handle) ) {				$line_of_text = fgets($file_handle);				if ($i==1){					$delim = substr($line_of_text, 3, 1);				}				$l=strpos($line_of_text, $delim);				$segname = substr($line_of_text, 0, $l);				$tmporder[$i] = explode($delim, $line_of_text);
-				$i++;  			}
+		while($curorder = $orders->fetch_assoc()){
+			$ediFile = $curorder['edi_file'];
+			$i=1;
+			$file_handle = fopen("/home/strongbo/docs/edi/" . $ediFile, "rb");
+			$line_of_text = fgets($file_handle);
+			rewind($file_handle);
+			if(strlen($line_of_text) > 120){
+				$line_of_text = str_replace(substr($line_of_text, 105,1), substr($line_of_text, 105,1) . "\n", $line_of_text);
+				file_put_contents("/home/strongbo/docs/edi/" . $ediFile, $line_of_text);
+			}
+			rewind($file_handle);
+			$tmporder = array();
+			while (!feof($file_handle) ) {
+				$line_of_text = fgets($file_handle);
+				if ($i==1){
+					$delim = substr($line_of_text, 3, 1);
+				}
+				$l=strpos($line_of_text, $delim);
+				$segname = substr($line_of_text, 0, $l);
+				$tmporder[$i] = explode($delim, $line_of_text);
+				$i++;  
+			}
 			$order = array();
 			foreach ( $tmporder as $line ) {
 				$lastindex = end($line);
@@ -1359,7 +1379,8 @@ final class ITRexus_Woocommerce {
 				}
 				reset($line);
 				$order[] = $line;
-			}			$order["totalLines"]=$i;
+			}
+			$order["totalLines"]=$i;
 			$purpose = $this->FindSegment($order, "BAK", 1);
 			$type = $this->FindSegment($order, "BAK", 2);
 			$PONumber = $this->FindSegment($order, "BAK", 3);
@@ -1719,37 +1740,37 @@ final class ITRexus_Woocommerce {
 		Actions
 	*/
 	public function Create_Actions() {
-		add_action('admin_menu', array($this, 'Submenus'));
-		add_action('woocommerce_update_order_item', array($this, 'Check_Is_Multivendor'));
-		add_action('woocommerce_variation_display', array($this, 'Variation_Grid'));
-		add_action('woocommerce_variation_display', array($this, 'Grid_View'));
-		add_action("activated_plugin", array($this, "this_plugin_last"));
-		add_action('woocommerce_checkout_order_processed', array($this, 'write_EDI_order'));
-		add_action('ITR_Pre_Change_Order', array($this, 'pre_change_order') );
-		add_action('ITR_Change_Order', array($this, 'change_order') );
-		add_action('wp_ajax_inline_save', array($this, 'inline_save'), 2 );
-		remove_action('woocommerce_after_single_product_summary','woocommerce_output_product_data_tabs');
-		remove_action('woocommerce_single_product_summary','woocommerce_template_single_price');
-		remove_action('woocommerce_single_product_summary','woocommerce_template_single_excerpt');
-		remove_action('woocommerce_single_product_summary','woocommerce_template_single_add_to_cart');
-		add_action( 'woocommerce_single_product_summary', 'woocommerce_output_product_data_tabs', 25 );
-		add_action( 'woocommerce_single_product_summary', array($this, 'color_select'), 45 );
-		add_action( 'woocommerce_single_product_summary', array($this, 'Price_View'), 26 );
-		add_action('minute_tasks', array($this, 'Check_EDI'));
-        add_action('woocommerce_after_checkout_validation', array($this, 'pre_checkout'));
-        add_action('woocommerce_checkout_order_processed', array($this, 'post_checkout'));
-        add_action('woocommerce_check_cart_items', array($this, 'duplicate_order'));
-		remove_action( 'woocommerce_sidebar', 10);
-        add_action( 'yit_header', array($this, 'pre_slider'), 101 ); 
-        add_action( 'woocommerce_init', array( $this, 'create_company_class' ) );
+            add_action('admin_menu', array($this, 'Submenus'));
+            add_action('woocommerce_update_order_item', array($this, 'Check_Is_Multivendor'));
+            add_action('woocommerce_variation_display', array($this, 'Variation_Grid'));
+            add_action('woocommerce_variation_display', array($this, 'Grid_View'));
+            add_action("activated_plugin", array($this, "this_plugin_last"));
+            add_action('woocommerce_checkout_order_processed', array($this, 'write_EDI_order'));
+            add_action('ITR_Pre_Change_Order', array($this, 'pre_change_order') );
+            add_action('ITR_Change_Order', array($this, 'change_order') );
+            add_action('wp_ajax_inline_save', array($this, 'inline_save'), 2 );
+            remove_action('woocommerce_after_single_product_summary','woocommerce_output_product_data_tabs');
+            remove_action('woocommerce_single_product_summary','woocommerce_template_single_price');
+            remove_action('woocommerce_single_product_summary','woocommerce_template_single_excerpt');
+            remove_action('woocommerce_single_product_summary','woocommerce_template_single_add_to_cart');
+            add_action( 'woocommerce_single_product_summary', 'woocommerce_output_product_data_tabs', 25 );
+            add_action( 'woocommerce_single_product_summary', array($this, 'color_select'), 45 );
+            add_action( 'woocommerce_single_product_summary', array($this, 'Price_View'), 26 );
+            add_action('minute_tasks', array($this, 'Check_EDI'));
+            add_action('woocommerce_after_checkout_validation', array($this, 'pre_checkout'));
+            add_action('woocommerce_checkout_order_processed', array($this, 'post_checkout'));
+            add_action('woocommerce_check_cart_items', array($this, 'duplicate_order'));
+            remove_action( 'woocommerce_sidebar', 10);
+            add_action( 'yit_header', array($this, 'pre_slider'), 101 ); 
+            add_action( 'woocommerce_init', array( $this, 'create_company_class' ) );
 
-		//Scripts
-		add_action('woocommerce_variation_display', array($this, 'Variation_Script'));
-		wp_enqueue_script( 'ITR_javascript', $this->plugin_url() . '/itrexus.js', array('jquery'));
-		wp_enqueue_script( 'ITR_bootstrap', 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', array('jquery'));
-		add_filter( 'woocommerce_login_redirect', array($this, 'wc_custom_user_redirect'), 10, 2 );
-		add_action( 'wp_enqueue_scripts', function(){ wp_enqueue_style( 'ITR_CSS', $this->plugin_url() . '/itrexus.css'); }, 4000);
-        wp_enqueue_style('ITR_bootstrap_css', "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css");
+            //Scripts
+            add_action('woocommerce_variation_display', array($this, 'Variation_Script'));
+            wp_enqueue_script( 'ITR_javascript', $this->plugin_url() . '/itrexus.js', array('jquery'));
+            wp_enqueue_script( 'ITR_bootstrap', 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', array('jquery'));
+            add_filter( 'woocommerce_login_redirect', array($this, 'wc_custom_user_redirect'), 10, 2 );
+            add_action( 'wp_enqueue_scripts', function(){ wp_enqueue_style( 'ITR_CSS', $this->plugin_url() . '/itrexus.css'); }, 4000);
+            wp_enqueue_style('ITR_bootstrap_css', "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css");
         
         //Check for custom customer order number
         add_filter('woocommerce_order_number', array($this, 'Check_For_Customer_Order_Number'), 10, 2);
@@ -1764,7 +1785,83 @@ final class ITRexus_Woocommerce {
 	public function Variation_Script() {
 		wp_enqueue_style( 'ITR_Variation_Grid_CSS', $this->plugin_url() . '/variation_grid.css');
 		wp_enqueue_script( 'ITR_Variation_Grid', $this->plugin_url() . '/variation_grid.js', array('jquery'));
-	}	/*		EDI Functions	*/	public function DocTypetoString($type){		switch($type){			case "PO":				return "Purchase Order";				break;			case "IN":				return "Invoice";				break;			case "PR":				return "Acknowledgment";				break;			case "SH":				return "Advance Ship Notice";				break;		}	}	public function FindSegment($order, $seg, $code, $qual = 0, $qualCode = '', $envVal = 0){		for ($l=$envVal; $l < $order["totalLines"]; $l++){			if ($order[$l][0] == $seg){				if($qual>0){					if ($order[$l][$qual] == $qualCode){						 return ($order[$l][$code]);					}				} else {					return ($order[$l][$code]);				}			}			}	}	public function FindSegmentPos($order, $seg, $code = '', $qual = 0, $qualCode = '', $envVal=0){		for ($l=$envVal; $l < $order["totalLines"]; $l++){			if ($order[$l][0] == $seg){				if($qual>0){					if ($order[$l][$qual] == $qualCode){						return $l;					}				} else {					return $l;				}			}		}	}	public function FindQual($qualcode, $segment) {		$refdb = new SQLite3('defdb/' . substr($segment, 0, 1));		$defres = $refdb->query("select qualdef from qualifier where qualcode='".$qualcode."' and recordname='".$segment."';");		$defrow = $defres->fetchArray();			return $defrow[0];	}	public function RevQual($qualcode, $segment) {		$refdb = new SQLite3('defdb/' . substr($segment, 0, 1));		$defres = $refdb->query('select qualcode from qualifier where UPPER(qualdef)=UPPER("'.$qualcode.'") and recordname="'.$segment.'";');		$defrow = $defres->fetchArray();			return $defrow[0];	}	public function TPLookup($tpid) {		return "TP Lookup Function -- $tpid";	}	public function carrierLookup($carrierId) {			switch($carrierId){				case "FDEG":					return "FedEx Ground";					break;				case "IN":					return "Invoice";					break;				case "PR":					return "Acknowledgment";					break;				case "SH":					return "Advance Ship Notice";					break;			}	}
+	}
+	/*
+		EDI Functions
+	*/
+	public function DocTypetoString($type){
+		switch($type){
+			case "PO":
+				return "Purchase Order";
+				break;
+			case "IN":
+				return "Invoice";
+				break;
+			case "PR":
+				return "Acknowledgment";
+				break;
+			case "SH":
+				return "Advance Ship Notice";
+				break;
+		}
+	}
+	public function FindSegment($order, $seg, $code, $qual = 0, $qualCode = '', $envVal = 0){
+		for ($l=$envVal; $l < $order["totalLines"]; $l++){
+			if ($order[$l][0] == $seg){
+				if($qual>0){
+					if ($order[$l][$qual] == $qualCode){
+						 return ($order[$l][$code]);
+					}
+				} else {
+					return ($order[$l][$code]);
+				}
+			}	
+		}
+	}
+	public function FindSegmentPos($order, $seg, $code = '', $qual = 0, $qualCode = '', $envVal=0){
+		for ($l=$envVal; $l < $order["totalLines"]; $l++){
+			if ($order[$l][0] == $seg){
+				if($qual>0){
+					if ($order[$l][$qual] == $qualCode){
+						return $l;
+					}
+				} else {
+					return $l;
+				}
+			}
+		}
+	}
+	public function FindQual($qualcode, $segment) {
+		$refdb = new SQLite3('defdb/' . substr($segment, 0, 1));
+		$defres = $refdb->query("select qualdef from qualifier where qualcode='".$qualcode."' and recordname='".$segment."';");
+		$defrow = $defres->fetchArray();	
+		return $defrow[0];
+	}
+	public function RevQual($qualcode, $segment) {
+		$refdb = new SQLite3('defdb/' . substr($segment, 0, 1));
+		$defres = $refdb->query('select qualcode from qualifier where UPPER(qualdef)=UPPER("'.$qualcode.'") and recordname="'.$segment.'";');
+		$defrow = $defres->fetchArray();	
+		return $defrow[0];
+	}
+	public function TPLookup($tpid) {
+		return "TP Lookup Function -- $tpid";
+	}
+	public function carrierLookup($carrierId) {
+			switch($carrierId){
+				case "FDEG":
+					return "FedEx Ground";
+					break;
+				case "IN":
+					return "Invoice";
+					break;
+				case "PR":
+					return "Acknowledgment";
+					break;
+				case "SH":
+					return "Advance Ship Notice";
+					break;
+			}
+	}
 	public function MessageCreate($type, $message){
 		global $wpdb;
 		$wpdb->insert( 
